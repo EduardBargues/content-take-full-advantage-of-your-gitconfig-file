@@ -1,0 +1,54 @@
+[user]
+	name = <your-name-here>
+	email = <your-email-here>
+[alias]
+	; REBASE
+	rebase-dev = "!f(){ git fetch; git rebase -i --autosquash origin/dev; }; f"
+	rebase-develop = "!f(){ git fetch; git rebase -i --autosquash origin/develop; }; f"
+	rebase-master = "!f(){ git fetch; git rebase -i --autosquash origin/master; }; f"
+	rebase-continue = "!f(){ git rebase --continue; }; f"
+	; CHECKOUT
+	checkout-feature-from = "!f(){ git stash; git checkout \"$1\"; git fetch; git reset --hard origin/\"$1\"; git checkout -b feature/\"$2\"; git stash pop; }; f"
+	checkout-bugfix-from = "!f(){ git stash; git checkout \"$1\"; git fetch; git reset --hard origin/\"$1\"; git checkout -b bugfix/\"$2\"; git stash pop; }; f"
+	; COMMIT
+	cp = cherry-pick
+	commit-fixup = "!f() { git add .; git commit --fixup \"$(git rev-parse HEAD)\"; }; f" 
+	commit-fix = "!f(){ git add .; git commit -m fix:\"$1\"; }; f"
+	commit-break = "!f(){ git add .; git commit -m break:\"$1\"; }; f"
+	commit-feature = "!f(){ git add .; git commit -m feat:\"$1\"; }; f"
+	; LOG
+	l = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
+	; PUSH
+	push-fast = "!f(){ git push -f -u origin \"$(git branch --show-current)\"; }; f"
+    ; TRAILERS
+    co-authored-by = "!git trailer-add Co-authored-by"
+    requested-by ="!git trailer-add Requested-by"
+    reported-by = "!git trailer-add Reported-by"
+    tested-by = "!git trailer-add Tested-by"
+    trailer-add = "!f(){ GIT_EDITOR=\"git interpret-trailers --trailer='$1: $2' --in-place\" git commit --amend; }; f"
+    ; MIX
+    st = status
+    hurry-develop = "!git hurry develop"
+    hurry-master = "!git hurry master"
+    hurry = "!f(){ git fetch; git rebase -i origin/\"$1\" --autosquash; git push -f -u origin \"$(git branch --show-current)\"; }; f"
+    save-work = "!f(){ git add .; git commit -m save-progress; git push -f -u origin \"$(git branch --show-current)\"; }; f"
+[color]
+    ui = true
+[color "status"]
+    changed = yellow bold
+    untracked = red bold
+    added = green bold
+[core]
+	editor = code --new-window --wait
+[diff]
+	tool = vscode-diff
+[difftool]
+	prompt = false
+[difftool "vscode-diff"]
+	cmd = code --wait --diff $LOCAL $REMOTE 
+[merge]
+	tool = vscode-merge
+[mergetool]
+	keepBackup = false
+[mergetool "vscode-merge"]
+	cmd = code --wait $MERGED
